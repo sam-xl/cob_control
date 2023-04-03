@@ -54,8 +54,8 @@ VelocitySmoother::VelocitySmoother(const std::string &name)
 
 void VelocitySmoother::reconfigCB(cob_base_velocity_smoother::paramsConfig &config, uint32_t level)
 {
-  ROS_INFO("Reconfigure request : %f %f %f %f %f %f %f %f",
-           config.speed_lim_vx, config.speed_lim_vy, config.speed_lim_w, config.accel_lim_vx, config.accel_lim_vy, config.accel_lim_w, config.decel_factor, config.decel_factor_safe);
+  ROS_INFO("Reconfigure request : %f %f %f %f %f %f %f %f %f %f",
+           config.speed_lim_vx, config.speed_lim_vy, config.speed_lim_w, config.accel_lim_vx, config.accel_lim_vy, config.accel_lim_w, config.decel_factor_vx,config.decel_factor_vy,config.decel_factor_w,config.decel_factor_safe);
 
   speed_lim_vx  = config.speed_lim_vx;
   speed_lim_vy  = config.speed_lim_vy;
@@ -63,11 +63,14 @@ void VelocitySmoother::reconfigCB(cob_base_velocity_smoother::paramsConfig &conf
   accel_lim_vx  = config.accel_lim_vx;
   accel_lim_vy  = config.accel_lim_vy;
   accel_lim_w  = config.accel_lim_w;
-  decel_factor = config.decel_factor;
+  // decel_factor = config.decel_factor;
+  decel_factor_vx = config.decel_factor_vx;
+  decel_factor_vy = config.decel_factor_vy;
+  decel_factor_w = config.decel_factor_w;
   decel_factor_safe = config.decel_factor_safe;
-  decel_lim_vx  = decel_factor*accel_lim_vx;
-  decel_lim_vy  = decel_factor*accel_lim_vy;
-  decel_lim_w  = decel_factor*accel_lim_w;
+  decel_lim_vx  = decel_factor_vx*accel_lim_vx;
+  decel_lim_vy  = decel_factor_vy*accel_lim_vy;
+  decel_lim_w  = decel_factor_w*accel_lim_w;
   decel_lim_vx_safe = decel_factor_safe*accel_lim_vx;
   decel_lim_vy_safe = decel_factor_safe*accel_lim_vy;
   decel_lim_w_safe = decel_factor_safe*accel_lim_w;
@@ -308,7 +311,10 @@ bool VelocitySmoother::init(ros::NodeHandle& nh)
   // Optional parameters
   int feedback;
   nh.param("frequency",      frequency,     20.0);
-  nh.param("decel_factor",   decel_factor,   1.0);
+  // nh.param("decel_factor",   decel_factor,   1.0);
+  nh.param("decel_factor_vx",   decel_factor_vx,   1.0);
+  nh.param("decel_factor_vy",   decel_factor_vy,   1.0);
+  nh.param("decel_factor_w",   decel_factor_w,   1.0);
   nh.param("decel_factor_safe",   decel_factor_safe,   1.0);
   nh.param("robot_feedback", feedback, (int)NONE);
   nh.param("amplitude", amplitude, 3.0);
@@ -340,9 +346,9 @@ bool VelocitySmoother::init(ros::NodeHandle& nh)
   }
 
   // Deceleration can be more aggressive, if necessary
-  decel_lim_vx = decel_factor*accel_lim_vx;
-  decel_lim_vy = decel_factor*accel_lim_vy;
-  decel_lim_w = decel_factor*accel_lim_w;
+  decel_lim_vx = decel_factor_vx*accel_lim_vx;
+  decel_lim_vy = decel_factor_vy*accel_lim_vy;
+  decel_lim_w = decel_factor_w*accel_lim_w;
   // In safety cases (no topic command anymore), deceleration should be very aggressive
   decel_lim_vx_safe = decel_factor_safe*accel_lim_vx;
   decel_lim_vy_safe = decel_factor_safe*accel_lim_vy;
