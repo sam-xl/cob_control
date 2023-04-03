@@ -68,6 +68,8 @@ private:
 
   double frequency;
 
+  double amplitude;//
+
   geometry_msgs::Twist last_cmd_vel;
   geometry_msgs::Twist  current_vel;
   geometry_msgs::Twist   target_vel;

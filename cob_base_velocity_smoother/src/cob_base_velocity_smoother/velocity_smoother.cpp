@@ -140,7 +140,7 @@ void VelocitySmoother::spin()
   while (! shutdown_req && ros::ok())
   {
     if ((input_active == true) && (cb_avg_time > 0.0) &&
-        ((ros::Time::now() - last_cb_time).toSec() > std::min(3.0*cb_avg_time, 0.5)))
+        ((ros::Time::now() - last_cb_time).toSec() > std::min(amplitude*cb_avg_time, 0.5)))//std::min(3.0*cb_avg_time, 0.5)
     {
       // Velocity input no active anymore; normally last command is a zero-velocity one, but reassure
       // this, just in case something went wrong with our input, or he just forgot good manners...
@@ -311,6 +311,7 @@ bool VelocitySmoother::init(ros::NodeHandle& nh)
   nh.param("decel_factor",   decel_factor,   1.0);
   nh.param("decel_factor_safe",   decel_factor_safe,   1.0);
   nh.param("robot_feedback", feedback, (int)NONE);
+  nh.param("amplitude", amplitude, 3.0);
 
   if ((int(feedback) < NONE) || (int(feedback) > COMMANDS))
   {
