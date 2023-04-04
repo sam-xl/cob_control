@@ -65,7 +65,7 @@ private:
   double speed_lim_vy, accel_lim_vy, decel_lim_vy, decel_lim_vy_safe;
   double speed_lim_w, accel_lim_w, decel_lim_w, decel_lim_w_safe;
   //double decel_factor, decel_factor_safe;
-  double decel_factor_safe;
+  double decel_factor_safe_vx,decel_factor_safe_vy,decel_factor_safe_w;
   double decel_factor_vx, decel_factor_vy, decel_factor_w;
 
   double frequency;
